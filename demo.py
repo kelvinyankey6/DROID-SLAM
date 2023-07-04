@@ -15,7 +15,7 @@ from torch.multiprocessing import Process
 from droid import Droid
 
 import torch.nn.functional as F
-
+from pathlib import Path
 
 def show_image(image):
     image = image.permute(1, 2, 0).cpu().numpy()
@@ -103,6 +103,7 @@ if __name__ == '__main__':
     parser.add_argument("--backend_nms", type=int, default=3)
     parser.add_argument("--upsample", action="store_true")
     parser.add_argument("--reconstruction_path", help="path to saved reconstruction")
+    parser.add_argument("--save_headless", help="Save points and poses to ply file")
     args = parser.parse_args()
 
     args.stereo = False
@@ -113,6 +114,7 @@ if __name__ == '__main__':
     # need high resolution depths
     if args.reconstruction_path is not None:
         args.upsample = True
+        args.full_reconstruction_path = Path("reconstructions/{}".format(args.reconstruction_path)).resolve()
 
     tstamps = []
     for (t, image, intrinsics) in tqdm(image_stream(args.imagedir, args.calib, args.stride)):

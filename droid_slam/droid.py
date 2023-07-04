@@ -19,6 +19,7 @@ class Droid:
         self.load_weights(args.weights)
         self.args = args
         self.disable_vis = args.disable_vis
+        self.save_headless = args.save_headless
 
         # store images, depth, poses, intrinsics (shared between processes)
         self.video = DepthVideo(args.image_size, args.buffer, stereo=args.stereo)
@@ -37,6 +38,12 @@ class Droid:
             from visualization import droid_visualization
             self.visualizer = Process(target=droid_visualization, args=(self.video,))
             self.visualizer.start()
+
+        if self.save_headless:
+            from headless_visualization import headless_visualization
+
+            self.headlessVis = Process(target=headless_visualization, args=(self.video, args.full_reconstruction_path))
+            self.headlessVis.start()
 
         # post processor - fill in poses for non-keyframes
         self.traj_filler = PoseTrajectoryFiller(self.net, self.video)
@@ -83,6 +90,10 @@ class Droid:
         torch.cuda.empty_cache()
         print("#" * 32)
         self.backend(12)
+        #ensure that the subprocesses can finish
+        if self.headlessVis:
+            self.headlessVis.join()
+
 
         camera_trajectory = self.traj_filler(stream)
         return camera_trajectory.inv().data.cpu().numpy()
