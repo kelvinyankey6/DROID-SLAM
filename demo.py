@@ -114,6 +114,7 @@ if __name__ == '__main__':
     # need high resolution depths
     if args.reconstruction_path is not None:
         args.upsample = True
+        Path("reconstructions/{}".format(args.reconstruction_path)).mkdir(parents=True, exist_ok=True)
         args.full_reconstruction_path = Path("reconstructions/{}".format(args.reconstruction_path)).resolve()
 
     tstamps = []
@@ -129,8 +130,8 @@ if __name__ == '__main__':
             droid = Droid(args)
         
         droid.track(t, image, intrinsics=intrinsics)
-
+    traj_est = droid.terminate(image_stream(args.imagedir, args.calib, args.stride))
     if args.reconstruction_path is not None:
         save_reconstruction(droid, args.reconstruction_path)
+        np.save("reconstructions/{}/traj_est.npy".format(args.reconstruction_path), traj_est)
 
-    traj_est = droid.terminate(image_stream(args.imagedir, args.calib, args.stride))

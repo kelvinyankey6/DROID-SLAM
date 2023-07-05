@@ -54,7 +54,7 @@ def create_point_actor(points, colors):
     return point_cloud
 
 
-def headless_visualization(video, saveDir, device="cuda:0"):
+def droid_visualization(video, saveDir, device="cuda:0"):
     """ DROID visualization frontend """
 
     torch.cuda.set_device(device)
@@ -123,11 +123,9 @@ def headless_visualization(video, saveDir, device="cuda:0"):
                 ix = dirty_index[i].item()
 
                 if ix in droid_visualization.cameras:
-                    vis.remove_geometry(droid_visualization.cameras[ix])
                     del droid_visualization.cameras[ix]
 
                 if ix in droid_visualization.points:
-                    vis.remove_geometry(droid_visualization.points[ix])
                     del droid_visualization.points[ix]
 
                 ### add camera actor ###

@@ -16,6 +16,7 @@ from torch.multiprocessing import Process
 class Droid:
     def __init__(self, args):
         super(Droid, self).__init__()
+        self.headlessVis = None
         self.load_weights(args.weights)
         self.args = args
         self.disable_vis = args.disable_vis
@@ -39,11 +40,7 @@ class Droid:
             self.visualizer = Process(target=droid_visualization, args=(self.video,))
             self.visualizer.start()
 
-        if self.save_headless:
-            from headless_visualization import headless_visualization
 
-            self.headlessVis = Process(target=headless_visualization, args=(self.video, args.full_reconstruction_path))
-            self.headlessVis.start()
 
         # post processor - fill in poses for non-keyframes
         self.traj_filler = PoseTrajectoryFiller(self.net, self.video)
@@ -91,10 +88,13 @@ class Droid:
         print("#" * 32)
         self.backend(12)
         #ensure that the subprocesses can finish
-        if self.headlessVis:
+        # do after BA
+        if self.save_headless:
+            print("Saving headless visualizations")
+            from headless_visualization import droid_visualization
+            self.headlessVis = Process(target=droid_visualization, args=(self.video, args.full_reconstruction_path))
+            self.headlessVis.start()
             self.headlessVis.join()
-
-
         camera_trajectory = self.traj_filler(stream)
         return camera_trajectory.inv().data.cpu().numpy()
 
