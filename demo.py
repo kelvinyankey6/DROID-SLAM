@@ -103,7 +103,7 @@ if __name__ == '__main__':
     parser.add_argument("--backend_nms", type=int, default=3)
     parser.add_argument("--upsample", action="store_true")
     parser.add_argument("--reconstruction_path", help="path to saved reconstruction")
-    parser.add_argument("--save_headless", help="Save points and poses to ply file")
+    parser.add_argument("--save_headless", action="store_true", help="Save points and poses to ply file")
     args = parser.parse_args()
 
     args.stereo = False
