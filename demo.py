@@ -68,13 +68,12 @@ def save_reconstruction(droid, reconstruction_path):
     disps = droid.video.disps_up[:t].cpu().numpy()
     poses = droid.video.poses[:t].cpu().numpy()
     intrinsics = droid.video.intrinsics[:t].cpu().numpy()
-
-    Path("reconstructions/{}".format(reconstruction_path)).mkdir(parents=True, exist_ok=True)
-    np.save("reconstructions/{}/tstamps.npy".format(reconstruction_path), tstamps)
-    np.save("reconstructions/{}/images.npy".format(reconstruction_path), images)
-    np.save("reconstructions/{}/disps.npy".format(reconstruction_path), disps)
-    np.save("reconstructions/{}/poses.npy".format(reconstruction_path), poses)
-    np.save("reconstructions/{}/intrinsics.npy".format(reconstruction_path), intrinsics)
+    Path(reconstruction_path).mkdir(parents=True, exist_ok=True)
+    np.save("{}/tstamps.npy".format(reconstruction_path), tstamps)
+    np.save("{}/images.npy".format(reconstruction_path), images)
+    np.save("{}/disps.npy".format(reconstruction_path), disps)
+    np.save("{}/poses.npy".format(reconstruction_path), poses)
+    np.save("{}/intrinsics.npy".format(reconstruction_path), intrinsics)
 
 
 if __name__ == '__main__':
@@ -114,8 +113,9 @@ if __name__ == '__main__':
     # need high resolution depths
     if args.reconstruction_path is not None:
         args.upsample = True
-        Path("reconstructions/{}".format(args.reconstruction_path)).mkdir(parents=True, exist_ok=True)
-        args.full_reconstruction_path = Path("reconstructions/{}".format(args.reconstruction_path)).resolve()
+
+
+
 
     tstamps = []
     for (t, image, intrinsics) in tqdm(image_stream(args.imagedir, args.calib, args.stride)):
@@ -133,5 +133,5 @@ if __name__ == '__main__':
     traj_est = droid.terminate(image_stream(args.imagedir, args.calib, args.stride))
     if args.reconstruction_path is not None:
         save_reconstruction(droid, args.reconstruction_path)
-        np.save("reconstructions/{}/traj_est.npy".format(args.reconstruction_path), traj_est)
+        np.save("{}/traj_est.npy".format(args.reconstruction_path), traj_est)
 

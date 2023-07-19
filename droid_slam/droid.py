@@ -92,7 +92,7 @@ class Droid:
         if self.save_headless:
             print("Saving headless visualizations")
             from headless_visualization import droid_visualization
-            self.headlessVis = Process(target=droid_visualization, args=(self.video, self.args.full_reconstruction_path))
+            self.headlessVis = Process(target=droid_visualization, args=(self.video, self.args.reconstruction_path))
             self.headlessVis.start()
             self.headlessVis.join()
         camera_trajectory = self.traj_filler(stream)
