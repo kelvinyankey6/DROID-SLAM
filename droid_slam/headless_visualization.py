@@ -6,7 +6,7 @@ import time
 import argparse
 import numpy as np
 import open3d as o3d
-
+import os
 from lietorch import SE3
 import geom.projective_ops as pops
 
@@ -82,11 +82,11 @@ def droid_visualization(video, saveDir, device="cuda:0"):
         pcd_points = o3d.geometry.PointCloud()
         for p in droid_visualization.points.items():
             pcd_points += p[1]
-        o3d.io.write_point_cloud(f"{saveDir}/3dpoints.ply", pcd_points, write_ascii=False)
+        o3d.io.write_point_cloud(os.path.join(saveDir, "3dpoints.ply"), pcd_points, write_ascii=False)
         pcd_camera = create_camera_actor(True)
         for c in droid_visualization.cameras.items():
             pcd_camera += c[1]
-        o3d.io.write_line_set(f"{saveDir}/cameraPoses.ply", pcd_camera, write_ascii=False)
+        o3d.io.write_line_set(os.path.join(saveDir, "cameraPoses.ply"), pcd_camera, write_ascii=False)
     def gen_points_and_poses():
         with torch.no_grad():
 
